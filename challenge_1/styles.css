@@ -1,0 +1,19 @@
+.tile {
+  cursor: pointer;
+  font-size: 40px;
+}
+
+.scoreboard {
+  font-size:20px;
+  font-style: italic
+}
+
+.xscore, .oscore {
+  font-size:20px;
+  font-style: italic
+}
+
+#gameOver {
+  color: darkmagenta;
+  font-size: 20px;
+}
