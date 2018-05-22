@@ -1,19 +1,82 @@
+body {
+  background-image: url('tic-tac-toe.png');
+}
+
+@font-face {
+  font-family: c76;
+  src: url('./Chapter76\ Demo.ttf');
+}
+.title {
+  padding-top: 80px;
+  font-family: c76;
+  font-size: 50px;
+  text-align: center;
+}
+
 .tile {
+  font-family: c76;
   cursor: pointer;
-  font-size: 40px;
+  font-size: 70px;
+}
+
+#reset {
+  width: 150px;
+  margin: auto;
+}
+
+.row {
+  margin: auto;
+  width: 50%;
+  text-align: center;
 }
 
 .scoreboard {
-  font-size:20px;
-  font-style: italic
+  font-family: c76;
+  text-align: center;
+  font-size: 25px;
 }
 
-.xscore, .oscore {
-  font-size:20px;
-  font-style: italic
+.xscore,
+.oscore {
+  text-align: center;
+  font-family: c76;
+  font-size: 20px;
+}
+
+.oscore {
+  padding-bottom: 10px;
 }
 
 #gameOver {
+  text-align: center;
   color: darkmagenta;
+  font-family: c76;
   font-size: 20px;
+}
+
+.image {
+  position: absolute;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  margin: -40px 0 0 -60px;
+  -webkit-animation: spin 4s linear infinite;
+  -moz-animation: spin 4s linear infinite;
+  animation: spin 4s linear infinite;
+}
+@-moz-keyframes spin {
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }

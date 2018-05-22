@@ -9,6 +9,26 @@ document.addEventListener('DOMContentLoaded', function(event) {
   var scoreBoard = { x: 0, o: 0 };
   var gameOver = false;
 
+  var init = function() {
+    formatRowData();
+    formatColData();
+    addListeners();
+  };
+
+
+  var addListeners = function() {
+    resetBtn.addEventListener('click', e => {
+      onResetClick();
+    });
+
+    for (let tile of tiles) {
+      tile.addEventListener('click', e => {
+        onTileClick(tile);
+      });
+    }
+  };
+
+
   var formatRowData = function() {
     let newRow = [];
     for (let i = 0; i < tiles.length; i++) {
@@ -30,21 +50,12 @@ document.addEventListener('DOMContentLoaded', function(event) {
     }
   };
 
-  var checkWin = function() {
-    //returns win bool
+  var checkDiags = function() {
     let majorDiag = [];
     let minorDiag = [];
     for (let i = 0; i < 3; i++) {
-      if (tileRows[i].every(item => item.innerHTML === `[${currentPlayer}]`)) {
-        gameOver = true;
-      } else if (
-        tileCols[i].every(item => item.innerHTML === `[${currentPlayer}]`)
-      ) {
-        gameOver = true;
-      } else {
-        majorDiag.push(tileRows[i][i]);
-        minorDiag.push(tileRows[i][2 - i]);
-      }
+      majorDiag.push(tileRows[i][i]);
+      minorDiag.push(tileRows[i][2 - i]);
     }
     if (
       majorDiag.every(item => item.innerHTML === `[${currentPlayer}]`) ||
@@ -54,14 +65,59 @@ document.addEventListener('DOMContentLoaded', function(event) {
     }
   };
 
+  var checkRowCol = function() {
+    for (let i = 0; i < 3; i++) {
+      if (tileRows[i].every(item => item.innerHTML === `[${currentPlayer}]`)) {
+        gameOver = true;
+      } else if (
+        tileCols[i].every(item => item.innerHTML === `[${currentPlayer}]`)
+      ) {
+        gameOver = true;
+      }
+    }
+  };
+
+  var checkWin = function() {
+    checkRowCol();
+    checkDiags();
+    if (!gameOver && tilesPlaced === 9) {
+      displayMessage('tie');
+    }
+    if (gameOver === true) {
+      addScore(currentPlayer);
+      displayMessage('win');
+    } else {
+      switchUser();
+    }
+  };
+
+  var displayMessage = function(status) {
+    var newDiv = document.createElement('div');
+    if (status === 'tie') {
+      var textnode = document.createTextNode(`Tie game...`);
+    } else if (status === 'win') {
+      var textnode = document.createTextNode(
+        `Player ${currentPlayer} has won the game!
+         They will go first next game.`
+      );
+    }
+    newDiv.appendChild(textnode);
+    newDiv.setAttribute('id', 'gameOver');
+    document.body.appendChild(newDiv);
+  };
+
   var addScore = function(player) {
     scoreBoard[player]++;
     let xScore = document.getElementsByClassName('xscore');
     let oScore = document.getElementsByClassName('oscore');
-    console.log(scoreBoard.x)
-    console.log(oScore)
     oScore[0].innerHTML = `o: ${scoreBoard.o}`;
     xScore[0].innerHTML = `x: ${scoreBoard.x}`;
+  };
+
+  var switchUser = function() {
+    if (!gameOver && tilesPlaced < 9) {
+      currentPlayer = currentPlayer === 'x' ? 'o' : 'x';
+    }
   };
 
   var onTileClick = function(tile) {
@@ -69,23 +125,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
       tile.innerHTML = `[${currentPlayer}]`;
       tilesPlaced++;
       checkWin();
-      if (!gameOver && tilesPlaced < 9) {
-        currentPlayer = currentPlayer === 'x' ? 'o' : 'x';
-      } else {
-        var newDiv = document.createElement('div');
-        if (!gameOver && tilesPlaced === 9) {
-          var textnode = document.createTextNode(`Tie game...`);
-        } else if (gameOver) {
-          var textnode = document.createTextNode(
-            `Player ${currentPlayer} has won the game!
-             They will go first next game.`
-          );
-          addScore(currentPlayer);
-        }
-        newDiv.appendChild(textnode);
-        newDiv.setAttribute('id', 'gameOver');
-        document.body.appendChild(newDiv);
-      }
     }
   };
 
@@ -96,24 +135,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
     if (winDiv) {
       winDiv.remove();
     }
-
     for (let tile of tiles) {
       tile.innerHTML = '[_]';
     }
   };
 
-  var addListeners = function() {
-    resetBtn.addEventListener('click', e => {
-      onResetClick();
-    });
-
-    for (let tile of tiles) {
-      tile.addEventListener('click', e => {
-        onTileClick(tile);
-      });
-    }
-  };
-  formatRowData();
-  formatColData();
-  addListeners();
+  init();
 });
