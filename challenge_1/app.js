@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
     addListeners();
   };
 
-
   var addListeners = function() {
     resetBtn.addEventListener('click', e => {
       onResetClick();
@@ -27,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
       });
     }
   };
-
 
   var formatRowData = function() {
     let newRow = [];
@@ -103,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     }
     newDiv.appendChild(textnode);
     newDiv.setAttribute('id', 'gameOver');
-    document.body.appendChild(newDiv);
+    document.getElementsByClassName('oscore')[0].appendChild(newDiv);
   };
 
   var addScore = function(player) {
@@ -119,12 +117,23 @@ document.addEventListener('DOMContentLoaded', function(event) {
       currentPlayer = currentPlayer === 'x' ? 'o' : 'x';
     }
   };
+  var placeMove = function(tile) {
+    tile.innerHTML = `[${currentPlayer}]`;
+    tilesPlaced++;
+    checkWin();
+  };
+
+  var validMove = function(tile) {
+    if (tile.innerHTML === '[_]' && !gameOver) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   var onTileClick = function(tile) {
-    if (tile.innerHTML === '[_]' && !gameOver) {
-      tile.innerHTML = `[${currentPlayer}]`;
-      tilesPlaced++;
-      checkWin();
+    if (validMove(tile)) {
+      placeMove(tile);
     }
   };
 
