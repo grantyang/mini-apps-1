@@ -3,26 +3,87 @@ document.addEventListener('DOMContentLoaded', function(event) {
   var currentPlayer = 'x';
   var tiles = document.getElementsByClassName('tile');
   var resetBtn = document.getElementById('reset');
+  var nameBtns = document.getElementsByClassName('nameBtn');
   var tileRows = [];
   var tileCols = [];
   var tilesPlaced = 0;
-  var scoreBoard = { x: 0, o: 0 };
+  var scoreBoard = {};
   var gameOver = false;
+  var name1 = 'x';
+  var name2 = 'o';
 
   var init = function() {
     formatRowData();
     formatColData();
     addListeners();
+    scoreBoard[name1] = 0;
+    scoreBoard[name2] = 0;
   };
 
+  //presentational
+
+  var onResetClick = function() {
+    gameOver = false;
+    tilesPlaced = 0;
+    let winDiv = document.getElementById('gameOver');
+    if (winDiv) {
+      winDiv.remove();
+    }
+    for (let tile of tiles) {
+      tile.innerHTML = '[_]';
+    }
+  };
+
+  var displayMessage = function(status) {
+    var newDiv = document.createElement('div');
+    if (status === 'tie') {
+      var textnode = document.createTextNode(`Tie game...`);
+    } else if (status === 'win') {
+      console.log(currentPlayer);
+      let name;
+      if (currentPlayer === 'x') {
+        name = name1;
+      } else {
+        name = name2;
+      }
+      var textnode = document.createTextNode(
+        `${name} has won the game!
+         They will go first next game.`
+      );
+    }
+    newDiv.appendChild(textnode);
+    newDiv.setAttribute('id', 'gameOver');
+    document.getElementsByClassName('oscore')[0].appendChild(newDiv);
+  };
+
+  var renderScore = function() {
+    let xScore = document.getElementsByClassName('xscore');
+    let oScore = document.getElementsByClassName('oscore');
+    xScore[0].innerHTML = `${name1}: ${scoreBoard[name1]}`;
+    oScore[0].innerHTML = `${name2}: ${scoreBoard[name2]}`;
+  };
+
+  var placeMove = function(tile) {
+    tile.innerHTML = `[${currentPlayer}]`;
+    tilesPlaced++;
+    checkWin();
+  };
+
+  //data
+
   var addListeners = function() {
-    resetBtn.addEventListener('click', e => {
+    resetBtn.addEventListener('click', () => {
       onResetClick();
     });
 
     for (let tile of tiles) {
-      tile.addEventListener('click', e => {
+      tile.addEventListener('click', () => {
         onTileClick(tile);
+      });
+    }
+    for (let nameBtn of nameBtns) {
+      nameBtn.addEventListener('click', e => {
+        onNameSubmit(e, nameBtn);
       });
     }
   };
@@ -82,45 +143,22 @@ document.addEventListener('DOMContentLoaded', function(event) {
       displayMessage('tie');
     }
     if (gameOver === true) {
-      addScore(currentPlayer);
+      if (currentPlayer === 'x') {
+        scoreBoard[name1]++;
+      } else {
+        scoreBoard[name2]++;
+      }
+      renderScore();
       displayMessage('win');
     } else {
       switchUser();
     }
   };
 
-  var displayMessage = function(status) {
-    var newDiv = document.createElement('div');
-    if (status === 'tie') {
-      var textnode = document.createTextNode(`Tie game...`);
-    } else if (status === 'win') {
-      var textnode = document.createTextNode(
-        `Player ${currentPlayer} has won the game!
-         They will go first next game.`
-      );
-    }
-    newDiv.appendChild(textnode);
-    newDiv.setAttribute('id', 'gameOver');
-    document.getElementsByClassName('oscore')[0].appendChild(newDiv);
-  };
-
-  var addScore = function(player) {
-    scoreBoard[player]++;
-    let xScore = document.getElementsByClassName('xscore');
-    let oScore = document.getElementsByClassName('oscore');
-    oScore[0].innerHTML = `o: ${scoreBoard.o}`;
-    xScore[0].innerHTML = `x: ${scoreBoard.x}`;
-  };
-
   var switchUser = function() {
     if (!gameOver && tilesPlaced < 9) {
       currentPlayer = currentPlayer === 'x' ? 'o' : 'x';
     }
-  };
-  var placeMove = function(tile) {
-    tile.innerHTML = `[${currentPlayer}]`;
-    tilesPlaced++;
-    checkWin();
   };
 
   var validMove = function(tile) {
@@ -137,16 +175,23 @@ document.addEventListener('DOMContentLoaded', function(event) {
     }
   };
 
-  var onResetClick = function() {
-    gameOver = false;
-    tilesPlaced = 0;
-    let winDiv = document.getElementById('gameOver');
-    if (winDiv) {
-      winDiv.remove();
+  var onNameSubmit = function(e, nameBtn) {
+    let newName = document.getElementById(`name${e.target.id}`).value;
+    if (newName !== name1 && newName !== name2) {
+      if (e.target.id === '1') {
+        name1 = newName;
+      } else if (e.target.id === '2') {
+        name2 = newName;
+      }
+      updateScoreBoard();
     }
-    for (let tile of tiles) {
-      tile.innerHTML = '[_]';
-    }
+  };
+
+  var updateScoreBoard = function() {
+    scoreBoard = {}
+    scoreBoard[name1] = 0
+    scoreBoard[name2] = 0
+    renderScore();
   };
 
   init();
