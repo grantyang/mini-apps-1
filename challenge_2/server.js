@@ -42,11 +42,7 @@ var generateCSV = function(initialJSON) {
     rowCount++;
 
     bodyString = bodyString.concat(newLine.join(',') + '<br>');
-    console.log('rowId is', rowId)
-    console.log(newLine.join(',') + '<br>')
-    console.log('children of this row are', jsonObj.children)
     for (let child of jsonObj.children) {
-      console.log('passing in', savedId)
       recurse(child, savedId);
     }
   };
