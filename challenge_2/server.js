@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const mongoModel = require('./mongo.js').filesModel
+console.log(mongoModel)
 
 const app = express();
 app.use(express.static('client'));
@@ -8,7 +10,22 @@ app.use(bodyParser.json());
 
 app.post('/json', (req, res) => {
   let json = req.body;
-  res.send(generateCSV(json));
+  let csvString = generateCSV(json)
+  var mongoObj = {
+    jsonFile: JSON.stringify(req.body),
+    csvFile: csvString
+  }
+  var myData = new mongoModel(mongoObj)
+  myData.save()
+  .then(mongoData => {
+    console.log('mongoData inserted, it is', mongoData)
+    res.send(csvString)
+  })
+  .catch(error => {
+    res.status(400).send('error is', error)
+  })
+  // res.send(generateCSV(json));
+
 });
 
 var addRowId = function(newLine, rowCount) {
