@@ -35,15 +35,16 @@ var generateCSV = function(initialJSON) {
         newLine.push(jsonObj[field]);
       }
     }
-    
     addRowId(newLine, rowCount);
     addRowParentId(newLine, parentId);
     let savedId = rowCount;
     rowCount++;
 
     bodyString = bodyString.concat(newLine.join(',') + '<br>');
-    for (let child of jsonObj.children) {
-      recurse(child, savedId);
+    if (jsonObj.children) {
+      for (let child of jsonObj.children) {
+        recurse(child, savedId);
+      }
     }
   };
 
