@@ -12,13 +12,14 @@ var postJSON = function(input) {
     headers: {
       'content-type': 'application/json'
     },
-    method: 'POST', // *GET, POST, PUT, DELETE, etc.
-  }).then(response => {
-    return response.text()
-  }).then(responseData => {
-    $('#result').html(responseData)
-  }); 
-}
+    method: 'POST' // *GET, POST, PUT, DELETE, etc.
+  })
+    .then(response => response.text()) //parses response to text
+    .then(responseData => {
+      $('#result').html(responseData);
+    })
+    .catch(error => console.error(error));
+};
 // $.ajax({
 //   type: 'POST',
 //   url: 'http://127.0.0.1:3000/json',
